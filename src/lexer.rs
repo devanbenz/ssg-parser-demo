@@ -47,6 +47,15 @@ impl Lexer {
                         tokens.push(Token::HtmlOpeningTag(opening_tag));
                     }
                 },
+                Some(&'/') => {
+                    chars.next();
+                    let closing_tag: String = chars
+                        .by_ref()
+                        .take_while(|predicate| predicate != &'>')
+                        .collect();
+
+                    tokens.push(Token::HtmlClosingTag(closing_tag));
+                },
                 _ => {
                     if chars.peek().is_some_and(|c| c.is_alphabetic()) {
                         let literal: String = chars

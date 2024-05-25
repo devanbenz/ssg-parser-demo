@@ -1,21 +1,21 @@
 use crate::ast::{Ast};
+use crate::context::Context;
 use crate::lexer::Lexer;
+use crate::tamper::Tamper;
 
 mod lexer;
 mod ast;
+mod context;
+mod tamper;
+mod unparser;
 
 fn main() {
-    let mut lxr = Lexer::new("<div><p>{{ hello }}</p><p><b>hi</b>{{ world }}</p></div>".to_string());
-    let tokens = lxr.evaluate();
-    let ast = Ast::from_tokens(tokens);
+    let tamper_demo = Tamper::new_raw("<div><p>{{ value }}</p></div>".to_string());
+    let mut context = Context::new();
+    context.insert("value".to_string(), "foobar".to_string());
 
-    if let Some(a) = ast {
-        a.format(0);
-    }
-}
-
-struct Context {
-    ctx: Vec<(String, String)>,
+    let html = tamper_demo.render(&mut context);
+    println!("{:?}", html);
 }
 
 mod tests {
